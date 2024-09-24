@@ -21,11 +21,10 @@ The customer churn dataset is retrieved from [this Kaggle page](https://www.kagg
 4. Telco_customer_churn_demographics.csv
 5. Telco_customer_churn_population.csv
 
-EDA of the dataset can be explored at the Kaggle page, which are put into consideration but no extra action is deemed necessary for this project. A small modification were made to the customer churn dataset: A part of the original Q3 data is slightly altered, moved into separate files, and then labeled as Q4 data. This is to allow a showcase of how the developed data pipeline accepts new data, update existing data, and apply the updates into the dashboard as end result.
+The exploratory data analysis (EDA) of the dataset can be explored at the Kaggle page, which are put into consideration but no extra action is deemed necessary for this project. A small modification were made to the customer churn dataset: A part of the original Q3 data is slightly altered, moved into separate files, and then labeled as Q4 data. This is to allow a showcase of how the developed data pipeline accepts new data, update existing data, and apply the updates into the dashboard as end result.
 
 Below are data model of the customer churn data:
 <img width="1024" alt="Customer Churn Data Model" src="https://github.com/user-attachments/assets/1a067ad8-8b74-4636-afbc-894b0dd03b7c">
-
 
 Another dataset is shapefile of California county boundaries which was retrieved from [California Open Data Portal](https://data.ca.gov/dataset/ca-geographic-boundaries).
 
@@ -33,19 +32,31 @@ Another dataset is shapefile of California county boundaries which was retrieved
 ### Process: Azure Databricks
 Azure Databricks is well-suited for batch processing of this project size. It offers scalable, distributed computing through Spark, which can handle complex ETL (Extract, Transform, Load) tasks efficiently.
 
+This Azure Databricks (as well as other Azure resources / services) leverages Pay-As-You-Go subscription with specified region _UK South_, which was selected as one of best CPU decisions during author's time in Europe in terms of resource availability (which is not the case anymore, unfortunately making UK South a costly decision for the project). Three budget alerts were set to anticipate so that the subscription is not exceeding $20 as shown below.
+
+![Budget Alerts](https://github.com/user-attachments/assets/f4eaa77c-55c9-433a-8188-a42621350d85)
+
+The ADLS access security to the Databricks is **Managed Identity** using Azure Access Connector for Databricks, which is more convenient security access to allow scalable project compared to other accesses (access keys, SAS token, and service principal).
+
+In the workspace, a cluster was configured as shown below:
+
+<img width="1024" alt="Databricks Cluster Configuration" src="https://github.com/user-attachments/assets/678e172d-132b-4d2c-b49f-86da79cb3ec3">
+
+Justification for the configuration are listed below:
+1. Single user of Single Node - the most suitable configuration in terms of cost and workload for the project.
+2. 15.4 LTS runtime - latest runtime option that enables Unity Catalog to be used in the workspace.
+3. Standard_DS3_v2 with 4 Cores - for cost-wise decision suitable with the subscription's CPU quota.
+4. Auto Termination: 20 minutes - to quickly terminate the cluster and to minimize cost.
+5. Cluster Policy: Unrestricted - not necessary as only one cluster is being created in this project.
+
 ### Storage: Azure Data Lake Storage Gen2 + Delta Lake + Unity Catalog
 Azure Data Lake Storage Gen2 provides scalable and secure storage for massive datasets, with high throughput and optimized performance through its hierarchical namespace. The ADLS is treated as Delta Lake to improve data reliability and performance by offering ACID transactions, schema enforcement, and time travel capabilities, which are crucial for handling evolving datasets. Meanwhile, Unity Catalog allows for easier management of data access policies across different teams while ensuring consistent and secure data usage across all Databricks workspaces.
 
 In this project, two Delta Lakes are used:
-1. Project ADLS Storage Delta Lake
+1. Project ADLS Storage Delta Lake: The CSV files of telecom customer information are stored in the Delta Lake in the bronze layer.
+2. External ADLS Storage Delta Lake: California county boundaries' shapefile data are stored in and accessed via Unity Catalog's external volumes.
 
-   Owned data, such as CSVs containing telecom customer information, is ingested into the Delta Lake in the bronze layer. 
-  
-2. External ADLS Storage Delta Lake
-
-   California county boundaries' shapefile data are accessed via Unity Catalog's external volumes.
-
-Both Delta Lakes were setup with Access Connector for Databricks (namely managed identity) that were assigned as "Storage Blob Data Contributor" to let the ADLSs and the corresponding Unity Catalog to be used in the Databricks workspace.
+The setup above is to showcase how the Azure Databrick workspace can ingest data from multiple (external) Delta Lake. Both Delta Lakes were setup with Access Connector for Databricks (namely managed identity) that were assigned as "Storage Blob Data Contributor" to let the ADLSs and the corresponding Unity Catalog to be used in the Databricks workspace.
 
 ***--ADLS Credential Illustration--***
 
@@ -54,7 +65,6 @@ This project adopts **Medallion Architecture**: structuring the data flow into t
 
 
 
-
 -
 -
 -
@@ -63,10 +73,10 @@ This project adopts **Medallion Architecture**: structuring the data flow into t
 
 
 
-
-#### Orchestration: Azure Data Factory
+### Orchestration: Azure Data Factory
 Azure Data Factory is a great choice for dealing with periodic data ingestion and processing. It allows you to build pipelines that automate the ETL process, integrate data, and execute Azure Databricks notebooks on a scheduled basis.
-#### Visualization: Power BI
+
+### Visualization: Power BI
 Power BI is an excellent visualization tool for presenting advanced and interactive churn insights to stakeholders especially with its ability to easily connect to Azure-based solutions.
 
 Below is illustration of applied solution architecture in this project:
