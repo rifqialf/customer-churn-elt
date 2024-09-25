@@ -62,26 +62,25 @@ The setup above is to showcase how the Azure Databrick workspace can ingest data
 
 This project adopts **Medallion Architecture**: structuring the data flow into three layers—bronze, silver, and gold—where raw data is first ingested into the bronze layer, refined in the silver layer, and served as analytics-ready datasets in the gold layer. This architecture ensures cleaner and organised structure of data in each phase.
 
-
-
-
--
--
--
--
--
-
-
-
 ### Orchestration: Azure Data Factory
-Azure Data Factory is a great choice for dealing with periodic data ingestion and processing. It allows you to build pipelines that automate the ETL process, integrate data, and execute Azure Databricks notebooks on a scheduled basis.
+Azure Data Factory is a great choice for dealing with periodic data ingestion and processing. It allows you to build pipelines that automate the ETL process, integrate data, and execute Azure Databricks notebooks on a scheduled basis. Linked services were created to connect the Databricks workspace (using managed identity) and the two ADLSs (using simple access keys) to allow the pipeline to run accordingly. 
 
 ### Visualization: Power BI
-Power BI is an excellent visualization tool for presenting advanced and interactive churn insights to stakeholders especially with its ability to easily connect to Azure-based solutions.
+Power BI is an excellent visualization tool for presenting advanced and interactive churn insights to stakeholders especially with its ability to easily connect to Azure-based solutions. In this project, Unity Catalog tables from Azure Databricks were imported (without DirectQuery) into Power BI Desktop using Personal Access Key.
 
-Below is illustration of applied solution architecture in this project:
+## Data Engineering
+In the Databricks workspace, the project codebase is organised into 5 folders:
+1. ingestion - 
+2. transformation
+3. presentation
+4. includes
+5. setup
+   
 
-### Storage
 
+
+
+### Data Ingestion
+In the ingestion 
 
 
