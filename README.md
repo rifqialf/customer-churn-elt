@@ -102,42 +102,71 @@ Several points to point out:
 
 ### Data Transformation
 The transformation folder contains two transformation notebooks and one master notebook to run the two in sequence. 
-1. Filter churned customer - using SQL semi-join to Status silver table to only get churned customer data from all tables.
+1. Filter churned customer - using SQL semi-join to Status silver table to only get churned customer data from all tables excluding Population table (not required for the requirement).
 2. Intersect with county - using Geopandas (installed in cluster) to perform spatial join between the silver layer location table with county shapefile data.
 
-The result from this phase are tables into the gold layer, ready for presentation.
+The result from this phase are tables into the gold layer, ready for presentation. 
 
 ***-Picture of transformation notebooks-***
 ***-Picture of geopandas installed in cluster-***
 
 
 ## Azure Data Factory (ADF)
-Explain each pipelines
-- The logic
-Explain dataset
-Trigger
-
-
 Each data ingestion and data transformation have their own pipeline. Each of those pipelines use master notebook to run.
 
 <img width="260" alt="ADF Pipelines and Datasets" src="https://github.com/user-attachments/assets/5ecda3e0-63f6-4143-b4ee-1326c3e8e9bc">
 
 One master pipeline run both in sequence: *Execute Ingestion --> Execute Transformation*. The setup is designed in a way to make transformation run after ingestion has completed. 
 
-
+<img width="480" alt="ADF Pipelines Trigger" src="https://github.com/user-attachments/assets/b59a7f4e-4e93-496e-8903-66fff9c62830">
 
 A Schedule Trigger *monthly_customer_churn* was set to run the master pipeline every 5th day of new month, during which the pipeline will look for folder in the bronze directory that are named with the date of the run e.g. *2024-09-05* or *2025-01-05*. In the data ingestion pipeline, a logic is created. The trigger takes off at 20:00 to ensure no other processes that might overlap.
 
 <img width="480" alt="ADF Pipelines Trigger" src="https://github.com/user-attachments/assets/ff37f4f4-19b5-412b-819c-1b9b2a9ce635">
 
-In data ingestion pipeline, it starts with using *Get Metadata* activity to read the trigger and pipeline parameter for the run date. An if-condition waits for that activity to be completed, and look into the project's ADLS for the aforementioned raw data folder and check whether a folder named with the run date exists. If exists, activity to run data ingestion master notebook will start, otherwise an activity to return 404 error will run.
+In data ingestion pipeline, it starts with using *Get Metadata* activity to read the trigger and pipeline parameter for the run date. An if-condition waits for that activity to be completed, and look into the project's ADLS for the aforementioned raw data folder and check whether a folder named with the run date exists. If exists, activity to run data ingestion master notebook will start, otherwise an activity to return 404 error will run. Meanwhile, transformation pipeline only contains activity to run transformation master notebook.
 
-<img width="480" alt="ADF Pipelines Trigger" src="https://github.com/user-attachments/assets/cbda79a4-7355-4d0b-a5c9-f417f07989c1">
+<img width="480" alt="ADF Ingestion Pipelines" src="https://github.com/user-attachments/assets/cbda79a4-7355-4d0b-a5c9-f417f07989c1">
+
+<img width="240" alt="ADF Transformation Pipelines" src="https://github.com/user-attachments/assets/f7f377be-1bf2-4ee3-a351-8a22e8745974">
+
+## Power BI
+
+Table transformation:
+- Explain service unpivot - transform data
+- Explain measures using DAX
+The end result visualizations
+- Explain all are interconnected to each other based on data relationships
+- Explain each visual + all used columns
+- Explain edit interaction
+What insights to be extracted:
+- When click on a region:
+    - Get all demographics info of people who churned
+    - etc.
+
+
+
+After tables are stored in gold layer from Azure Databricks, they are imported to Power BI via providing Databricks Server Hostname, HTTP path, and Personal Access Key.
+
+<img width="720" alt="Power BI data import" src="https://github.com/user-attachments/assets/f7e1c30e-2f59-4ae7-a69f-14a9555e4e7f">
+<img width="360" alt="Databricks Server Hostname and HTTP path" src="https://github.com/user-attachments/assets/ddd7c6f6-3a5d-492e-9867-94c1b83eadfb">
+
+The data is modelled using Star Schema, which is a relatively scalable and maintainable approach compared to normalized table.
+<img width="360" alt="Star schema" src="https://github.com/user-attachments/assets/ee453f17-46aa-4970-aa1b-9e922fd1ec76">
+
+Several modifications are shown in the Star Schema figure above.
+1. Unpivotted Service Table - This table is result of unpivoting service_churn table based on all columns regarding service plan types e.g. Internet Type, Tech Support, and Streaming services.
+2. 
 
 
 
 
+## Cost Analysis
+Set up cost
+Reason
+- UK South
+- Trial on master notebook and ADF
 
 
-***-Picture of data ingestion pipeline-***
-***-Picture of data transformation pipeline-***
+![costanalysis_charts](https://github.com/user-attachments/assets/d90e33b1-25c7-4900-b8fe-86ca08a7ddf3)
+
