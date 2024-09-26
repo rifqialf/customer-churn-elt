@@ -131,25 +131,16 @@ In data ingestion pipeline, it starts with using *Get Metadata* activity to read
 <img width="240" alt="ADF Transformation Pipelines" src="https://github.com/user-attachments/assets/f7f377be-1bf2-4ee3-a351-8a22e8745974">
 
 ## Power BI
-
-The end result visualizations
-- Explain all are interconnected to each other based on data relationships
-- Explain each visual + all used columns
-- Explain edit interaction
-What insights to be extracted:
-- When click on a region:
-    - Get all demographics info of people who churned
-    - etc.
-
-
-
 After tables are stored in gold layer from Azure Databricks, they are imported to Power BI.
+
 <img width="360" alt="Power BI data import" src="https://github.com/user-attachments/assets/f7e1c30e-2f59-4ae7-a69f-14a9555e4e7f">
 
 The import execution is done by providing Databricks Server Hostname, HTTP path, and Personal Access Key. All data is imported instead of using DirectQuery to lower cost considering the data is updated less frequently in this scenario (quarterly or monthly at best).
+
 <img width="360" alt="Databricks Server Hostname and HTTP path" src="https://github.com/user-attachments/assets/ddd7c6f6-3a5d-492e-9867-94c1b83eadfb">
 
 The data is modelled using Star Schema, which is a relatively scalable and maintainable approach compared to normalized table.
+
 <img width="360" alt="Star schema" src="https://github.com/user-attachments/assets/ee453f17-46aa-4970-aa1b-9e922fd1ec76">
 
 Several modifications are shown in the Star Schema figure above.
@@ -161,26 +152,38 @@ Several modifications are shown in the Star Schema figure above.
 <img width="1080" alt="Star schema" src="https://github.com/user-attachments/assets/353b9f77-5c11-480f-8f91-ff782ae091db">
 
 The visualization can be observed in below pictures.
-<img width="1080" alt="Star schema" src="https://github.com/user-attachments/assets/e4e25cc9-7fa4-45ff-9712-4fae0de3225f">
+<img width="1080" alt="Dashboard default" src="https://github.com/user-attachments/assets/e4e25cc9-7fa4-45ff-9712-4fae0de3225f">
 
 Below shows the interactive filter when a region on the map is clicked; or a part of the chart or a table row is clicked
-<img width="1080" alt="Star schema" src="https://github.com/user-attachments/assets/7067c31b-e037-4402-91d7-ea72f2d3e99d">
-<img width="1080" alt="Star schema" src="https://github.com/user-attachments/assets/dfdecb64-465a-460b-99e5-1eb276cd92be">
-<img width="1080" alt="Star schema" src="https://github.com/user-attachments/assets/212a95c0-dfae-49fa-92eb-46f8d913b54e">
+<img width="1080" alt="Dashboard with map clicked" src="https://github.com/user-attachments/assets/7067c31b-e037-4402-91d7-ea72f2d3e99d">
+<img width="1080" alt="Dashboard with chart clicked" src="https://github.com/user-attachments/assets/dfdecb64-465a-460b-99e5-1eb276cd92be">
+<img width="1080" alt="Dashboard with row table clicked" src="https://github.com/user-attachments/assets/212a95c0-dfae-49fa-92eb-46f8d913b54e">
 
-Explanation for each visuals are below:
+Several considerations to point out:
+1. California Shape Map uses custom TopoJSON file of California state that is stored locally, which is not a problem due to very rare update of the data. 
+2. The distribution of churn reason, contract type, and demographic data (customer age under 30, gender, and marital status) use pie chart for clear visualization.
+3. Service Plans' Clustered Column Chart use the unpivoted service table.
+4. Zip code and Customer ID are shown in table so user can granularly check in each level.
 
-
-
-
-
+This dashboard is a proposed answer to the requirements.
 
 ## Cost Analysis
-Set up cost
-Reason
-- UK South
-- Trial on master notebook and ADF
-
+This pipeline is built from September 8 - 24, which ultimately cost $14.30. The flat graph during September 8 - 17 was when author developed the main codebase in local Jupyterlab in Anaconda after creating and testing small code in the Databricks workspace. The biggest costs comes from the Databrick Notebooks, which is where the processing and code troubleshooting takes place.
 
 ![costanalysis_charts](https://github.com/user-attachments/assets/d90e33b1-25c7-4900-b8fe-86ca08a7ddf3)
 
+Several evaluations for lowering the cost are:
+1. Using closer regional resources. This project was one of portfolio ideas I prepared during my time as Master student in Faculty of ITC, University of Twente, the Netherlands. UK south was a viable resource option during that time. Unfortunately, during this project was developed and tested, I stayed in Indonesia, which makes UK South resources expensive. Using closer resources such as Southeast Asia region might have drawback in terms of available resources to pick from, but it will lower the cost.
+2. Perform fewer testing on master notebook and ADF. The project's most challenging part was on troubleshooting errors and unexpected results, which caused more cost.
+
+## Conclusion
+Using this data pipeline, when new data such as new quarterly data (e.g. Q4 data) comes (inside a folder named with 'YYYY-mm-dd' format of when the data will be extracted by ADF; stored in the bronze layer directory of the project's ADLS), ADF will be triggered automatically and the gold layer data will be updated.
+
+![image](https://github.com/user-attachments/assets/070315f0-ac88-4d0c-a1c9-0d3f530eb88f)
+
+In this project, Power BI data update is still manual by refreshing data within the Power BI itself. A suggestion to trigger Power BI data refresh from ADF is possible, but it requires premium tier of Power BI, which is not available in this project.
+
+Thank you for reading this portfolio project. Improvement for suggestions are greatly appreciated!
+
+_Regards,
+Rifqi Alfadhillah Sentosa_
