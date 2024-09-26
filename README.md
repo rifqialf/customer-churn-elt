@@ -126,15 +126,12 @@ A Schedule Trigger *monthly_customer_churn* was set to run the master pipeline e
 
 In data ingestion pipeline, it starts with using *Get Metadata* activity to read the trigger and pipeline parameter for the run date. An if-condition waits for that activity to be completed, and look into the project's ADLS for the aforementioned raw data folder and check whether a folder named with the run date exists. If exists, activity to run data ingestion master notebook will start, otherwise an activity to return 404 error will run. Meanwhile, transformation pipeline only contains activity to run transformation master notebook.
 
-<img width="480" alt="ADF Ingestion Pipelines" src="https://github.com/user-attachments/assets/cbda79a4-7355-4d0b-a5c9-f417f07989c1">
+<img width="360" alt="ADF Ingestion Pipelines" src="https://github.com/user-attachments/assets/cbda79a4-7355-4d0b-a5c9-f417f07989c1">
 
 <img width="240" alt="ADF Transformation Pipelines" src="https://github.com/user-attachments/assets/f7f377be-1bf2-4ee3-a351-8a22e8745974">
 
 ## Power BI
 
-Table transformation:
-- Explain service unpivot - transform data
-- Explain measures using DAX
 The end result visualizations
 - Explain all are interconnected to each other based on data relationships
 - Explain each visual + all used columns
@@ -146,9 +143,10 @@ What insights to be extracted:
 
 
 
-After tables are stored in gold layer from Azure Databricks, they are imported to Power BI via providing Databricks Server Hostname, HTTP path, and Personal Access Key.
+After tables are stored in gold layer from Azure Databricks, they are imported to Power BI.
+<img width="360" alt="Power BI data import" src="https://github.com/user-attachments/assets/f7e1c30e-2f59-4ae7-a69f-14a9555e4e7f">
 
-<img width="720" alt="Power BI data import" src="https://github.com/user-attachments/assets/f7e1c30e-2f59-4ae7-a69f-14a9555e4e7f">
+The import execution is done by providing Databricks Server Hostname, HTTP path, and Personal Access Key. All data is imported instead of using DirectQuery to lower cost considering the data is updated less frequently in this scenario (quarterly or monthly at best).
 <img width="360" alt="Databricks Server Hostname and HTTP path" src="https://github.com/user-attachments/assets/ddd7c6f6-3a5d-492e-9867-94c1b83eadfb">
 
 The data is modelled using Star Schema, which is a relatively scalable and maintainable approach compared to normalized table.
@@ -156,7 +154,23 @@ The data is modelled using Star Schema, which is a relatively scalable and maint
 
 Several modifications are shown in the Star Schema figure above.
 1. Unpivotted Service Table - This table is result of unpivoting service_churn table based on all columns regarding service plan types e.g. Internet Type, Tech Support, and Streaming services.
-2. 
+2. Add several new measures using DAX Query: _used_region_ to show active region of the data using if statement; _latest_quarter_ to show the latest quarter the data is; _average_churn_mrr_ to show average MRR lost due to customer churn
+ 
+<img width="1080" alt="Star schema" src="https://github.com/user-attachments/assets/afe32355-345e-4eda-9a32-2e2ae5f0e192">
+<img width="1080" alt="Star schema" src="https://github.com/user-attachments/assets/5ecbc8ca-4cb1-4dc8-8f96-ccd58e254b86">
+<img width="1080" alt="Star schema" src="https://github.com/user-attachments/assets/353b9f77-5c11-480f-8f91-ff782ae091db">
+
+The visualization can be observed in below pictures.
+<img width="1080" alt="Star schema" src="https://github.com/user-attachments/assets/e4e25cc9-7fa4-45ff-9712-4fae0de3225f">
+
+Below shows the interactive filter when a region on the map is clicked; or a part of the chart or a table row is clicked
+<img width="1080" alt="Star schema" src="https://github.com/user-attachments/assets/7067c31b-e037-4402-91d7-ea72f2d3e99d">
+<img width="1080" alt="Star schema" src="https://github.com/user-attachments/assets/dfdecb64-465a-460b-99e5-1eb276cd92be">
+<img width="1080" alt="Star schema" src="https://github.com/user-attachments/assets/212a95c0-dfae-49fa-92eb-46f8d913b54e">
+
+Explanation for each visuals are below:
+
+
 
 
 
