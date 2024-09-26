@@ -47,7 +47,7 @@ Justification for the configuration are listed below:
 2. 15.4 LTS runtime - latest runtime option that enables Unity Catalog to be used in the workspace.
 3. Standard_DS3_v2 with 4 Cores - for cost-wise decision suitable with the subscription's CPU quota.
 4. Auto Termination: 20 minutes - to quickly terminate the cluster and to minimize cost.
-5. Cluster Policy: Unrestricted - not necessary as only one cluster is being created in this project.
+5. Cluster Policy: Unrestricted - cluster policy is not necessary as only one cluster is being created in this project.
 
 ### Storage: Azure Data Lake Storage Gen2 + Delta Lake + Unity Catalog
 Azure Data Lake Storage Gen2 provides scalable and secure storage for massive datasets, with high throughput and optimized performance through its hierarchical namespace. The ADLS is treated as Delta Lake to improve data reliability and performance by offering ACID transactions, schema enforcement, and time travel capabilities, which are crucial for handling evolving datasets. Meanwhile, Unity Catalog allows for easier management of data access policies across different teams while ensuring consistent and secure data usage across all Databricks workspaces.
@@ -80,7 +80,7 @@ In the Databricks workspace, the project codebase is organised into 5 folders:
 
 
 ### Data Ingestion
-The ingestion folder mainly contains Python-based notebooks to ingest each of the 5 raw files. One master notebook runs all of the ingestion notebooks.
+The ingestion folder mainly contains Python-based notebooks to ingest each of the 5 raw files. One master notebook runs all of the ingestion notebooks in sequence (not in parallel as to not overload the cores, although it is capable of doing parallel ingestion in this project).
 
 The main steps of data ingestion for all files are similar:
 1. Create schema using StructField and StructType. This approach seems to provide tidier code and easy to maintain once the schema evolves.
@@ -101,7 +101,7 @@ Several points to point out:
 
 
 ### Data Transformation
-The transformation folder contains two transformation notebooks and one master notebook to run the two. 
+The transformation folder contains two transformation notebooks and one master notebook to run the two in sequence. 
 1. Filter churned customer - using SQL semi-join to Status silver table to only get churned customer data from all tables.
 2. Intersect with county - using Geopandas (installed in cluster) to perform spatial join between the silver layer location table with county shapefile data.
 
@@ -111,4 +111,33 @@ The result from this phase are tables into the gold layer, ready for presentatio
 ***-Picture of geopandas installed in cluster-***
 
 
-## Azure Data Factory
+## Azure Data Factory (ADF)
+Explain each pipelines
+- The logic
+Explain dataset
+Trigger
+
+
+Each data ingestion and data transformation have their own pipeline. Each of those pipelines use master notebook to run.
+
+<img width="260" alt="ADF Pipelines and Datasets" src="https://github.com/user-attachments/assets/5ecda3e0-63f6-4143-b4ee-1326c3e8e9bc">
+
+One master pipeline run both in sequence: *Execute Ingestion --> Execute Transformation*. The setup is designed in a way to make transformation run after ingestion has completed. 
+
+
+
+A Schedule Trigger *monthly_customer_churn* was set to run the master pipeline every 5th day of new month, during which the pipeline will look for folder in the bronze directory that are named with the date of the run e.g. *2024-09-05* or *2025-01-05*. In the data ingestion pipeline, a logic is created. The trigger takes off at 20:00 to ensure no other processes that might overlap.
+
+<img width="480" alt="ADF Pipelines Trigger" src="https://github.com/user-attachments/assets/ff37f4f4-19b5-412b-819c-1b9b2a9ce635">
+
+In data ingestion pipeline, it starts with using *Get Metadata* activity to read the trigger and pipeline parameter for the run date. An if-condition waits for that activity to be completed, and look into the project's ADLS for the aforementioned raw data folder and check whether a folder named with the run date exists. If exists, activity to run data ingestion master notebook will start, otherwise an activity to return 404 error will run.
+
+<img width="480" alt="ADF Pipelines Trigger" src="https://github.com/user-attachments/assets/cbda79a4-7355-4d0b-a5c9-f417f07989c1">
+
+
+
+
+
+
+***-Picture of data ingestion pipeline-***
+***-Picture of data transformation pipeline-***
