@@ -201,7 +201,7 @@ Using this data pipeline, when new data such as new quarterly data (e.g. Q4 data
 
 In this project, Power BI data update is still manual by refreshing data within the Power BI itself. A suggestion to trigger Power BI data refresh from ADF is possible, but it requires premium tier of Power BI, which is not available in this project.
 
-<img width="1080" alt="Power BI Refresh" src="https://github.com/user-attachments/assets/070315f0-ac88-4d0c-a1c9-0d3f530eb88f">
+<img width="480" alt="Power BI Refresh" src="https://github.com/user-attachments/assets/070315f0-ac88-4d0c-a1c9-0d3f530eb88f">
 
 Thank you for reading this portfolio project. Improvement for suggestions are greatly appreciated!
 
