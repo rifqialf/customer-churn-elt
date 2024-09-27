@@ -29,6 +29,10 @@ Below are data model of the customer churn data:
 Another dataset is shapefile of California county boundaries which was retrieved from [California Open Data Portal](https://data.ca.gov/dataset/ca-geographic-boundaries).
 
 ## Solution Architecture
+In this project, a set of solutions are designed for building a simple ETL pipeline, shown in figure below. This project based its solution architecture on [this Azure web page](https://learn.microsoft.com/en-us/azure/architecture/solution-ideas/articles/ingest-etl-stream-with-adb).
+
+<img width="720" alt="Solution Architecture" src="https://github.com/user-attachments/assets/a075eede-5fdd-47ce-8256-76893fe69abc">
+
 ### Process: Azure Databricks
 Azure Databricks is well-suited for batch processing of this project size. It offers scalable, distributed computing through Spark, which can handle complex ETL (Extract, Transform, Load) tasks efficiently.
 
@@ -71,10 +75,6 @@ Azure Data Factory is a great choice for dealing with periodic data ingestion an
 
 ### Visualization: Power BI
 Power BI is an excellent visualization tool for presenting advanced and interactive churn insights to stakeholders especially with its ability to easily connect to Azure-based solutions. In this project, Unity Catalog tables from Azure Databricks were imported (without DirectQuery) into Power BI Desktop using Personal Access Key.
-
-### Credential Management
-
-***-- ADLS Credential Illustration - Which services access which services --***
 
 ## Data Engineering
 In the Databricks workspace, the project codebase is organised into 5 folders:
@@ -146,8 +146,7 @@ After tables are stored in gold layer from Azure Databricks, they are imported t
 <img width="360" alt="Power BI data import" src="https://github.com/user-attachments/assets/f7e1c30e-2f59-4ae7-a69f-14a9555e4e7f">
 
 The import execution is done by providing Databricks Server Hostname, HTTP path, and Personal Access Token. All data is imported instead of using DirectQuery to lower cost considering the data is updated less frequently in this scenario (quarterly or monthly at best).
-
-<img width="360" alt="Databricks Server Hostname and HTTP path" src="https://github.com/user-attachments/assets/ddd7c6f6-3a5d-492e-9867-94c1b83eadfb">
+    
 <img width="360" alt="Personal Acces Token" src="https://github.com/user-attachments/assets/d5422044-0f1f-46b8-94f0-989c926bc3c5">
 
 The data is modelled using Star Schema, which is a relatively scalable and maintainable approach compared to normalized table.
@@ -181,7 +180,7 @@ This dashboard is a proposed answer to the requirements.
 ## Cost Analysis
 This pipeline is built from September 8 - 24, which ultimately cost $14.30. The flat graph during September 8 - 17 was when author developed the main codebase in local Jupyterlab in Anaconda after creating and testing small code in the Databricks workspace. The biggest costs comes from the Databrick Notebooks, which is where the processing and code troubleshooting takes place.
 
-![costanalysis_charts](https://github.com/user-attachments/assets/d90e33b1-25c7-4900-b8fe-86ca08a7ddf3)
+<img width="1080" alt="Cost Analysis" src="https://github.com/user-attachments/assets/d90e33b1-25c7-4900-b8fe-86ca08a7ddf3">
 
 Several evaluations for lowering the cost are:
 1. Using closer regional resources. This project was one of portfolio ideas I prepared during my time as Master student in Faculty of ITC, University of Twente, the Netherlands. UK south was a viable resource option during that time. Unfortunately, during this project was developed and tested, I stayed in Indonesia, which makes UK South resources expensive. Using closer resources such as Southeast Asia region might have drawback in terms of available resources to pick from, but it will lower the cost.
@@ -190,9 +189,9 @@ Several evaluations for lowering the cost are:
 ## Conclusion
 Using this data pipeline, when new data such as new quarterly data (e.g. Q4 data) comes (inside a folder named with 'YYYY-mm-dd' format of when the data will be extracted by ADF; stored in the bronze layer directory of the project's ADLS), ADF will be triggered automatically and the gold layer data will be updated.
 
-![image](https://github.com/user-attachments/assets/070315f0-ac88-4d0c-a1c9-0d3f530eb88f)
-
 In this project, Power BI data update is still manual by refreshing data within the Power BI itself. A suggestion to trigger Power BI data refresh from ADF is possible, but it requires premium tier of Power BI, which is not available in this project.
+
+<img width="1080" alt="Power BI Refresh" src="https://github.com/user-attachments/assets/070315f0-ac88-4d0c-a1c9-0d3f530eb88f">
 
 Thank you for reading this portfolio project. Improvement for suggestions are greatly appreciated!
 
