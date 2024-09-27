@@ -39,15 +39,17 @@ In this project, a set of solutions are designed for building a simple ETL pipel
 ### Process: Azure Databricks
 Azure Databricks is well-suited for batch processing of this project size. It offers scalable, distributed computing through Spark, which can handle complex ETL (Extract, Transform, Load) tasks efficiently.
 
+<img width="720" alt="Customer Churn Data Model" src="https://github.com/user-attachments/assets/32dddfec-a432-45ca-b4cb-0142e02e6d90">
+
 This Azure Databricks (as well as other Azure resources / services) leverages Pay-As-You-Go subscription with specified region _UK South_, which was selected as one of best CPU decisions during author's time in Europe in terms of resource availability (which is not the case anymore, unfortunately making UK South a costly decision for the project). Three budget alerts were set to anticipate so that the subscription is not exceeding $20 as shown below.
 
-<img width="1024" alt="Budget Alerts" src="https://github.com/user-attachments/assets/f4eaa77c-55c9-433a-8188-a42621350d85">
+<img width="720" alt="Budget Alerts" src="https://github.com/user-attachments/assets/f4eaa77c-55c9-433a-8188-a42621350d85">
 
 The ADLS access security to the Databricks is **Managed Identity** using Azure Access Connector for Databricks, which is more convenient security access to allow scalable project compared to other accesses (access keys, SAS token, and service principal).
 
 In the workspace, a cluster was configured as shown below:
 
-<img width="1024" alt="Databricks Cluster Configuration" src="https://github.com/user-attachments/assets/678e172d-132b-4d2c-b49f-86da79cb3ec3">
+<img width="720" alt="Databricks Cluster Configuration" src="https://github.com/user-attachments/assets/678e172d-132b-4d2c-b49f-86da79cb3ec3">
 
 Justification for the configuration are listed below:
 1. Single user of Single Node - the most suitable configuration in terms of cost and workload for the project.
@@ -75,6 +77,9 @@ This project adopts **Medallion Architecture**: structuring the data flow into t
 
 ### Orchestration: Azure Data Factory
 Azure Data Factory is a great choice for dealing with periodic data ingestion and processing. It allows you to build pipelines that automate the ETL process, integrate data, and execute Azure Databricks notebooks on a scheduled basis. Linked services were created to connect the Databricks workspace (using managed identity) and the two ADLSs (using simple access keys) to allow the pipeline to run accordingly. 
+
+<img width="720" alt="Databricks Cluster Configuration" src="https://github.com/user-attachments/assets/8b3e7547-a363-431e-a56f-884089c729d7">
+
 
 ### Visualization: Power BI
 Power BI is an excellent visualization tool for presenting advanced and interactive churn insights to stakeholders especially with its ability to easily connect to Azure-based solutions. In this project, Unity Catalog tables from Azure Databricks were imported (without DirectQuery) into Power BI Desktop using Personal Access Key.
