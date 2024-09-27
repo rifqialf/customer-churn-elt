@@ -1,4 +1,4 @@
-# Telco Customer Churn Project
+# Telco Customer Churn ELT Project
 Scenario: A major telecommunication company in California, US, is experiencing a concerning rate of customer churn, particularly in certain counties. To address this issue and improve customer retention, the company has decided to develop a comprehensive dashboard that provides actionable insights into customer churn trends.
 
 <img width="360" alt="Customer Churn Data Model" src="https://github.com/user-attachments/assets/007efe45-0b3f-487e-9ca5-f1f0a250ccdf">
