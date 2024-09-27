@@ -187,7 +187,7 @@ Several considerations to point out:
 This dashboard is a proposed answer to the requirements.
 
 ## Cost Analysis
-This pipeline is built from September 8 - 24, which ultimately cost $14.30. The flat graph during September 8 - 17 was when author developed the main codebase in local Jupyterlab in Anaconda after creating and testing small code in the Databricks workspace. The biggest costs comes from the Databrick Notebooks, which is where the processing and code troubleshooting takes place.
+This pipeline is built from September 8 - 24, which ultimately cost $14.30. The flat graph during September 8 - 17 was when author developed the main codebase in local Jupyterlab in Anaconda after creating and testing small code in the Databricks workspace; as well as creating the Power BI dashboard using the resulted local CSVs. The biggest costs comes from the Databrick Notebooks, which is where the processing and code troubleshooting takes place.
 
 <img width="1080" alt="Cost Analysis" src="https://github.com/user-attachments/assets/d90e33b1-25c7-4900-b8fe-86ca08a7ddf3">
 
