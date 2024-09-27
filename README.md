@@ -63,7 +63,7 @@ Azure Data Lake Storage Gen2 provides scalable and secure storage for massive da
 
 Meanwhile, Unity Catalog allows for easier management of data access policies across different teams while ensuring consistent and secure data usage across all Databricks workspaces.
 
-<img width="480" alt="Unity Catalog Structure" src="https://github.com/user-attachments/assets/b8a5423e-96a7-460a-bb22-a6e2f2ad2a18">
+<img width="480" alt="Unity Catalog Structure" src="https://github.com/user-attachments/assets/92649c92-dada-425e-acb2-beaa62fe184f">
 
 In this project, two Delta Lakes are used:
 1. Project ADLS Storage Delta Lake: The CSV files of telecom customer information are stored in the Delta Lake in the bronze layer.
@@ -76,13 +76,18 @@ This project adopts **Medallion Architecture**: structuring the data flow into t
 <img width="480" alt="Medallion" src="https://github.com/user-attachments/assets/5a2e2733-fc68-4113-afad-c6e7f4cebbec">
 
 ### Orchestration: Azure Data Factory
-Azure Data Factory is a great choice for dealing with periodic data ingestion and processing. It allows you to build pipelines that automate the ETL process, integrate data, and execute Azure Databricks notebooks on a scheduled basis. Linked services were created to connect the Databricks workspace (using managed identity) and the two ADLSs (using simple access keys) to allow the pipeline to run accordingly. 
+Azure Data Factory is a great choice for dealing with periodic data ingestion and processing.
+
+<img width="720" alt="Databricks Cluster Configuration" src="https://github.com/user-attachments/assets/95052cd8-f4f4-40f5-9aed-bc9e394f486e">
+
+ADF allows you to build pipelines that automate the ETL process, integrate data, and execute Azure Databricks notebooks on a scheduled basis. Linked services were created to connect the Databricks workspace (using managed identity) and the two ADLSs (using simple access keys) to allow the pipeline to run accordingly. 
 
 <img width="720" alt="Databricks Cluster Configuration" src="https://github.com/user-attachments/assets/8b3e7547-a363-431e-a56f-884089c729d7">
 
-
 ### Visualization: Power BI
 Power BI is an excellent visualization tool for presenting advanced and interactive churn insights to stakeholders especially with its ability to easily connect to Azure-based solutions. In this project, Unity Catalog tables from Azure Databricks were imported (without DirectQuery) into Power BI Desktop using Personal Access Key.
+
+<img width="720" alt="Databricks Cluster Configuration" src="https://github.com/user-attachments/assets/465bbe88-5842-483f-96c3-196ba42abdf6">
 
 ## Data Engineering
 In the Databricks workspace, the project codebase is organised into 5 folders:
