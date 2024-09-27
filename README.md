@@ -1,4 +1,4 @@
-# Telco Customer Churn 
+# Telco Customer Churn Project
 Scenario: A major telecommunication company in California, US, is experiencing a concerning rate of customer churn, particularly in certain counties. To address this issue and improve customer retention, the company has decided to develop a comprehensive dashboard that provides actionable insights into customer churn trends.
 
 ## Introduction
