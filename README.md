@@ -6,6 +6,7 @@ Scenario: A major telecommunication company in California, US, is experiencing a
 
 ## Youtube Overview
 Kindly check the explanation video on YouTube:
+
 [![Portfolio Video](https://img.youtube.com/vi/OKXdMpj-atU/0.jpg)](https://www.youtube.com/watch?v=OKXdMpj-atU)
 
 ## Introduction
