@@ -34,7 +34,8 @@ Another dataset is shapefile of California county boundaries which was retrieved
 ## Solution Architecture
 In this project, a set of solutions are designed for building a simple ELT (Extract, Load, Transform) pipeline, shown in figure below. This project based its solution architecture on [this Azure web page](https://learn.microsoft.com/en-us/azure/architecture/solution-ideas/articles/ingest-etl-stream-with-adb).
 
-<img width="720" alt="Solution Architecture" src="https://github.com/user-attachments/assets/a075eede-5fdd-47ce-8256-76893fe69abc">
+<img width="720" alt="Solution Architecture" src="https://github.com/user-attachments/assets/05eef5c0-3918-43b4-9f4c-a1aa75c744c3">
+
 
 ### Process: Azure Databricks
 Azure Databricks is well-suited for batch processing of this project size. It offers scalable, distributed computing through Spark, which can handle complex ETL or ELT tasks efficiently.
