@@ -34,14 +34,14 @@ Azure Databricks is well-suited for batch processing of this project size. It of
 
 This Azure Databricks (as well as other Azure resources / services) leverages Pay-As-You-Go subscription with specified region _UK South_, which was selected as one of best CPU decisions during author's time in Europe in terms of resource availability (which is not the case anymore, unfortunately making UK South a costly decision for the project). Three budget alerts were set to anticipate so that the subscription is not exceeding $20 as shown below.
 
-![Budget Alerts](https://github.com/user-attachments/assets/f4eaa77c-55c9-433a-8188-a42621350d85)
+<img width="1024" alt="Budget Alerts" src="https://github.com/user-attachments/assets/f4eaa77c-55c9-433a-8188-a42621350d85">
 
 The ADLS access security to the Databricks is **Managed Identity** using Azure Access Connector for Databricks, which is more convenient security access to allow scalable project compared to other accesses (access keys, SAS token, and service principal).
 
 In the workspace, a cluster was configured as shown below:
 
 <img width="1024" alt="Databricks Cluster Configuration" src="https://github.com/user-attachments/assets/678e172d-132b-4d2c-b49f-86da79cb3ec3">
- 
+
 Justification for the configuration are listed below:
 1. Single user of Single Node - the most suitable configuration in terms of cost and workload for the project.
 2. 15.4 LTS runtime - latest runtime option that enables Unity Catalog to be used in the workspace.
@@ -50,23 +50,31 @@ Justification for the configuration are listed below:
 5. Cluster Policy: Unrestricted - cluster policy is not necessary as only one cluster is being created in this project.
 
 ### Storage: Azure Data Lake Storage Gen2 + Delta Lake + Unity Catalog
-Azure Data Lake Storage Gen2 provides scalable and secure storage for massive datasets, with high throughput and optimized performance through its hierarchical namespace. The ADLS is treated as Delta Lake to improve data reliability and performance by offering ACID transactions, schema enforcement, and time travel capabilities, which are crucial for handling evolving datasets. Meanwhile, Unity Catalog allows for easier management of data access policies across different teams while ensuring consistent and secure data usage across all Databricks workspaces.
+Azure Data Lake Storage Gen2 provides scalable and secure storage for massive datasets, with high throughput and optimized performance through its hierarchical namespace. The ADLS is treated as Delta Lake to improve data reliability and performance by offering ACID transactions, schema enforcement, and time travel capabilities, which are crucial for handling evolving datasets. 
+
+Meanwhile, Unity Catalog allows for easier management of data access policies across different teams while ensuring consistent and secure data usage across all Databricks workspaces.
+
+<img width="480" alt="Unity Catalog Structure" src="https://github.com/user-attachments/assets/b8a5423e-96a7-460a-bb22-a6e2f2ad2a18">
 
 In this project, two Delta Lakes are used:
 1. Project ADLS Storage Delta Lake: The CSV files of telecom customer information are stored in the Delta Lake in the bronze layer.
 2. External ADLS Storage Delta Lake: California county boundaries' shapefile data are stored in and accessed via Unity Catalog's external volumes.
 
-The setup above is to showcase how the Azure Databrick workspace can ingest data from multiple (external) Delta Lake. Both Delta Lakes were setup with Access Connector for Databricks (namely managed identity) that were assigned as "Storage Blob Data Contributor" to let the ADLSs and the corresponding Unity Catalog to be used in the Databricks workspace.
-
-***-- ADLS Credential Illustration - Which services access which services --***
+The separated storage setup above is only to showcase how the Azure Databrick workspace can ingest data from multiple (external) Delta Lake. Both Delta Lakes were setup with Access Connector for Databricks (namely managed identity) that were assigned as "Storage Blob Data Contributor" to let the ADLSs and the corresponding Unity Catalog to be used in the Databricks workspace.
 
 This project adopts **Medallion Architecture**: structuring the data flow into three layers—bronze, silver, and gold—where raw data is first ingested into the bronze layer, refined in the silver layer, and served as analytics-ready datasets in the gold layer. This architecture ensures cleaner and organised structure of data in each phase.
+
+<img width="480" alt="Medallion" src="https://github.com/user-attachments/assets/5a2e2733-fc68-4113-afad-c6e7f4cebbec">
 
 ### Orchestration: Azure Data Factory
 Azure Data Factory is a great choice for dealing with periodic data ingestion and processing. It allows you to build pipelines that automate the ETL process, integrate data, and execute Azure Databricks notebooks on a scheduled basis. Linked services were created to connect the Databricks workspace (using managed identity) and the two ADLSs (using simple access keys) to allow the pipeline to run accordingly. 
 
 ### Visualization: Power BI
 Power BI is an excellent visualization tool for presenting advanced and interactive churn insights to stakeholders especially with its ability to easily connect to Azure-based solutions. In this project, Unity Catalog tables from Azure Databricks were imported (without DirectQuery) into Power BI Desktop using Personal Access Key.
+
+### Credential Management
+
+***-- ADLS Credential Illustration - Which services access which services --***
 
 ## Data Engineering
 In the Databricks workspace, the project codebase is organised into 5 folders:
@@ -76,11 +84,12 @@ In the Databricks workspace, the project codebase is organised into 5 folders:
 4. Includes - Holds reusable modules or utility functions that are shared across different scripts.
 5. Setup - Contains configuration scripts or initialization code needed to set up the environment.
 
-***-Picture of folders-***
-
+<img width="260" alt="Notebook folders" src="https://github.com/user-attachments/assets/1f069bcd-7683-4051-9b70-182fe3ef55f0">
 
 ### Data Ingestion
 The ingestion folder mainly contains Python-based notebooks to ingest each of the 5 raw files. One master notebook runs all of the ingestion notebooks in sequence (not in parallel as to not overload the cores, although it is capable of doing parallel ingestion in this project).
+
+<img width="480" alt="Data Ingestion Notebook" src="https://github.com/user-attachments/assets/481cdf65-3b2f-4152-806f-68907ee697c4">
 
 The main steps of data ingestion for all files are similar:
 1. Create schema using StructField and StructType. This approach seems to provide tidier code and easy to maintain once the schema evolves.
@@ -94,22 +103,23 @@ Several points to point out:
 3. The *common_functions* notebook is executed in all ingestion notebooks to provide pre-built functions: adding *ingestion_date* and write data.
 4. A parameter *file_date* must be provided to the Notebook widgets created with dbutils before executing the notebooks, which should match with folder name of the raw data. This parameter will be especially useful in the orchestration in Azure Data Factory.
 
-
-***-Picture of raw data to ingest-***
-***-Picture of ingsestion notebooks-***
-***-Picture of ingestion result-***
+<img width="640" alt="Data Ingestion Result" src="https://github.com/user-attachments/assets/d3b20868-cac3-489b-8276-fb872a2d42f6">
 
 
 ### Data Transformation
 The transformation folder contains two transformation notebooks and one master notebook to run the two in sequence. 
-1. Filter churned customer - using SQL semi-join to Status silver table to only get churned customer data from all tables excluding Population table (not required for the requirement).
-2. Intersect with county - using Geopandas (installed in cluster) to perform spatial join between the silver layer location table with county shapefile data.
+
+Filter churned customer - using SQL semi-join to Status silver table to only get churned customer data from all tables excluding Population table (not required for the requirement).
+
+<img width="640" alt="Transformation Notebook" src="https://github.com/user-attachments/assets/1d147aa7-309d-47f7-a710-647a55e9f246">
+
+Intersect with county - using Geopandas (installed in cluster) to perform spatial join between the silver layer location table with county shapefile data.
+
+<img width="640" alt="Geopandas installed in cluster" src="https://github.com/user-attachments/assets/af432519-9eaf-47d0-873b-066496db3968">
 
 The result from this phase are tables into the gold layer, ready for presentation. 
 
-***-Picture of transformation notebooks-***
-***-Picture of geopandas installed in cluster-***
-
+<img width="640" alt="Geopandas installed in cluster" src="https://github.com/user-attachments/assets/29e05888-2ec3-416f-b36a-8f41b8120691">
 
 ## Azure Data Factory (ADF)
 Each data ingestion and data transformation have their own pipeline. Each of those pipelines use master notebook to run.
@@ -135,9 +145,10 @@ After tables are stored in gold layer from Azure Databricks, they are imported t
 
 <img width="360" alt="Power BI data import" src="https://github.com/user-attachments/assets/f7e1c30e-2f59-4ae7-a69f-14a9555e4e7f">
 
-The import execution is done by providing Databricks Server Hostname, HTTP path, and Personal Access Key. All data is imported instead of using DirectQuery to lower cost considering the data is updated less frequently in this scenario (quarterly or monthly at best).
+The import execution is done by providing Databricks Server Hostname, HTTP path, and Personal Access Token. All data is imported instead of using DirectQuery to lower cost considering the data is updated less frequently in this scenario (quarterly or monthly at best).
 
 <img width="360" alt="Databricks Server Hostname and HTTP path" src="https://github.com/user-attachments/assets/ddd7c6f6-3a5d-492e-9867-94c1b83eadfb">
+<img width="360" alt="Personal Acces Token" src="https://github.com/user-attachments/assets/d5422044-0f1f-46b8-94f0-989c926bc3c5">
 
 The data is modelled using Star Schema, which is a relatively scalable and maintainable approach compared to normalized table.
 
