@@ -143,11 +143,11 @@ One master pipeline run both in sequence: *Execute Ingestion --> Execute Transfo
 
 <img width="480" alt="ADF Pipelines Trigger" src="https://github.com/user-attachments/assets/b59a7f4e-4e93-496e-8903-66fff9c62830">
 
-A Schedule Trigger *monthly_customer_churn* was set to run the master pipeline every 5th day of new month, during which the pipeline will look for folder in the bronze directory that are named with the date of the run e.g. *2024-09-05* or *2025-01-05*. In the data ingestion pipeline, a logic is created. The trigger takes off at 20:00 to ensure no other processes that might overlap.
+A Schedule Trigger *monthly_customer_churn* was set to run the master pipeline every 5th day of new month, during which the pipeline will look for folder in the bronze directory that are named with the date of the run e.g. *2024-09-05* or *2025-01-05*. The trigger takes off at 20:00 to ensure no other processes that might overlap.
 
 <img width="480" alt="ADF Pipelines Trigger" src="https://github.com/user-attachments/assets/ff37f4f4-19b5-412b-819c-1b9b2a9ce635">
 
-In data ingestion pipeline, it starts with using *Get Metadata* activity to read the trigger and pipeline parameter for the run date. An if-condition waits for that activity to be completed, and look into the project's ADLS for the aforementioned raw data folder and check whether a folder named with the run date exists. If exists, activity to run data ingestion master notebook will start, otherwise an activity to return 404 error will run. Meanwhile, transformation pipeline only contains activity to run transformation master notebook.
+In data ingestion pipeline, the logic starts with using *Get Metadata* activity to read the trigger and pipeline parameter for the run date. An if-condition waits for that activity to be completed, and look into the project's ADLS for the aforementioned raw data folder and check whether a folder named with the run date exists. If exists, activity to run data ingestion master notebook will start, otherwise an activity to return 404 error will run. Meanwhile, transformation pipeline only contains activity to run transformation master notebook.
 
 <img width="360" alt="ADF Ingestion Pipelines" src="https://github.com/user-attachments/assets/cbda79a4-7355-4d0b-a5c9-f417f07989c1">
 
