@@ -6,7 +6,7 @@ Scenario: A major telecommunication company in California, US, is experiencing a
 
 ## Introduction
 ### Project Requirements
-The goal is to create a churn analysis dashboard for a telecom company, showing customer behavior, reasons for churn, and churned revenue across regions. Key metrics include:
+The goal is to create a data pipeline for the company's customer churn data and visualization that shows customer behavior, reasons for churn, and churned revenue across county in the California state. Key metrics include:
 1. **Churn Rate** - Percentage of customers who canceled service.
 2. Average **Monthly Recurring Revenue (MRR)** for churned customers.
 3. **Churned Service Plans** - Service types associated with churn.
