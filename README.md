@@ -63,7 +63,7 @@ Azure Data Lake Storage Gen2 provides scalable and secure storage for massive da
 
 Meanwhile, Unity Catalog allows for easier management of data access policies across different teams while ensuring consistent and secure data usage across all Databricks workspaces.
 
-<img width="480" alt="Unity Catalog Structure" src="https://github.com/user-attachments/assets/92649c92-dada-425e-acb2-beaa62fe184f">
+<img width="720" alt="Unity Catalog Structure" src="https://github.com/user-attachments/assets/92649c92-dada-425e-acb2-beaa62fe184f">
 
 In this project, two Delta Lakes are used:
 1. Project ADLS Storage Delta Lake: The CSV files of telecom customer information are stored in the Delta Lake in the bronze layer.
@@ -73,7 +73,7 @@ The separated storage setup above is only to showcase how the Azure Databrick wo
 
 This project adopts **Medallion Architecture**: structuring the data flow into three layers—bronze, silver, and gold—where raw data is first ingested into the bronze layer, refined in the silver layer, and served as analytics-ready datasets in the gold layer. This architecture ensures cleaner and organised structure of data in each phase.
 
-<img width="480" alt="Medallion" src="https://github.com/user-attachments/assets/5a2e2733-fc68-4113-afad-c6e7f4cebbec">
+<img width="720" alt="Medallion" src="https://github.com/user-attachments/assets/5a2e2733-fc68-4113-afad-c6e7f4cebbec">
 
 ### Orchestration: Azure Data Factory
 Azure Data Factory is a great choice for dealing with periodic data ingestion and processing. ADF allows you to build pipelines that automate the ETL process, integrate data, and execute Azure Databricks notebooks on a scheduled basis. Linked services were created to connect the Databricks workspace (using managed identity) and the two ADLSs (using simple access keys) to allow the pipeline to run accordingly. 
@@ -137,11 +137,11 @@ Each data ingestion and data transformation have their own pipeline. Each of tho
 
 One master pipeline run both in sequence: *Execute Ingestion --> Execute Transformation*. The setup is designed in a way to make transformation run after ingestion has completed. 
 
-<img width="480" alt="ADF Pipelines Trigger" src="https://github.com/user-attachments/assets/b59a7f4e-4e93-496e-8903-66fff9c62830">
+<img width="720" alt="ADF Pipelines Trigger" src="https://github.com/user-attachments/assets/b59a7f4e-4e93-496e-8903-66fff9c62830">
 
 A Schedule Trigger *monthly_customer_churn* was set to run the master pipeline every 5th day of new month, during which the pipeline will look for folder in the bronze directory that are named with the date of the run e.g. *2024-09-05* or *2025-01-05*. The trigger takes off at 20:00 to ensure no other processes that might overlap.
 
-<img width="480" alt="ADF Pipelines Trigger" src="https://github.com/user-attachments/assets/ff37f4f4-19b5-412b-819c-1b9b2a9ce635">
+<img width="720" alt="ADF Pipelines Trigger" src="https://github.com/user-attachments/assets/ff37f4f4-19b5-412b-819c-1b9b2a9ce635">
 
 In data ingestion pipeline, the logic starts with using *Get Metadata* activity to read the trigger and pipeline parameter for the run date. An if-condition waits for that activity to be completed, and look into the project's ADLS for the aforementioned raw data folder and check whether a folder named with the run date exists. If exists, activity to run data ingestion master notebook will start, otherwise an activity to return 404 error will run. Meanwhile, transformation pipeline only contains activity to run transformation master notebook.
 
