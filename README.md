@@ -1,10 +1,16 @@
 # Telco Customer Churn ELT Project
-Scenario: A major telecommunication company in California, US, is experiencing a concerning rate of customer churn, particularly in certain counties. To address this issue and improve customer retention, the company has decided to develop a comprehensive dashboard that provides actionable insights into customer churn trends.
+
+_Click below to watch explanatory Youtube video of the project:_
+
+[![Portfolio Video](https://img.youtube.com/vi/OKXdMpj-atU/0.jpg)](https://www.youtube.com/watch?v=OKXdMpj-atU)
+
+## Introduction
+### Scenario
+A major telecommunication company in California, US, is experiencing a concerning rate of customer churn, particularly in certain counties. To address this issue and improve customer retention, the company has decided to develop a comprehensive dashboard that provides actionable insights into customer churn trends.
 
 <img width="360" alt="Customer Churn Data Model" src="https://github.com/user-attachments/assets/007efe45-0b3f-487e-9ca5-f1f0a250ccdf">
 <img width="360" alt="Customer Churn Data Model" src="https://github.com/user-attachments/assets/5242ac1e-51f2-404e-a391-5cf10df3175c">
 
-## Introduction
 ### Project Requirements
 The goal is to create a data pipeline for the company's customer churn data and visualization that shows customer behavior, reasons for churn, and churned revenue across county in the California state. Key metrics include:
 1. **Churn Rate** - Percentage of customers who canceled service.
@@ -207,8 +213,3 @@ Thank you for reading this portfolio project. Improvement for suggestions are gr
 
 _Regards,
 Rifqi Alfadhillah Sentosa_
-
-## Youtube Overview
-Kindly check the explanation video on YouTube:
-
-[![Portfolio Video](https://img.youtube.com/vi/OKXdMpj-atU/0.jpg)](https://www.youtube.com/watch?v=OKXdMpj-atU)
